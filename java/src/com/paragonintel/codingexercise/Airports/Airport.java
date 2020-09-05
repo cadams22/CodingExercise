@@ -6,6 +6,10 @@ public class Airport {
     private double latitude;
     private int elevation;
 
+    public String toString(){
+        return identifier + " at (" + longitude + "," + latitude + ") and elevation " +elevation;
+    }
+
     public String getIdentifier() {
         return this.identifier;
     }

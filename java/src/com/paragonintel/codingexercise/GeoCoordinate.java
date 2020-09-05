@@ -11,6 +11,13 @@ public class GeoCoordinate {
         this.setLongitude(longitude);
     }
 
+    public String toString() {
+        return "GeoCoordinate{" +
+                "latitude=" + latitude +
+                ", longitude=" + longitude +
+                '}';
+    }
+
     public boolean hasLocation() {
         return !Double.isNaN(this.latitude) && !Double.isNaN(this.longitude);
     }
@@ -39,10 +46,11 @@ public class GeoCoordinate {
 
         GeoCoordinate otherGeoCoordinate = (GeoCoordinate) other;
 
-        return this.latitude == otherGeoCoordinate.latitude &&
+        return this.latitude ==  otherGeoCoordinate.latitude &&
                 this.longitude == otherGeoCoordinate.longitude;
     }
 
+    // appears to be in statute miles (sm): source: https://www.nhc.noaa.gov/gccalc.shtml
     public double GetDistanceTo(GeoCoordinate other) {
         if (other == null) {
             return Double.NaN;
@@ -59,6 +67,7 @@ public class GeoCoordinate {
         return distance;
     }
 
+    // bearing is the clockwise direction of the line from North to point A and point A to point B
     public double GetBearingTo(GeoCoordinate point) {
         var phi1 = Math.toRadians(this.latitude);
         var phi2 = Math.toRadians(point.latitude);

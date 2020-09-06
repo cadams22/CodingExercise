@@ -17,8 +17,8 @@ import java.io.FileNotFoundException;
 public class Main {
 
     public static void main(String[] args) {
-        // change to a cleaner relative path
-        String path = "java/src/com/paragonintel/codingexercise/Resources/";
+        // project home is the java folder in this case
+        String path = "src/com/paragonintel/codingexercise/Resources/";
         String jsonFilename = "airports.json";
         String airportsFile = path + jsonFilename;
 

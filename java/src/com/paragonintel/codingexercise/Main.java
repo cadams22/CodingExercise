@@ -17,13 +17,14 @@ import java.io.FileNotFoundException;
 public class Main {
 
     public static void main(String[] args) {
+        // change to a cleaner relative path
         String path = "java/src/com/paragonintel/codingexercise/Resources/";
+        String jsonFilename = "airports.json";
+        String airportsFile = path + jsonFilename;
 
         AirportCollection airportCollection;
 
         try {
-            String jsonFilename = "airports.json";
-            String airportsFile = path + jsonFilename;
             airportCollection = AirportCollection.loadFromFile(airportsFile);
 
             String eventsFilename = "events.txt";
@@ -40,9 +41,7 @@ public class Main {
                 String aircraftIdentifier = event.getIdentifier();
                 Date currentTime = event.getTimestamp();
 
-                double latitude = event.getLatitude();
-                double longitude = event.getLongitude();
-                GeoCoordinate eventCoordinate = new GeoCoordinate(latitude,longitude);
+                GeoCoordinate eventCoordinate = new GeoCoordinate(event.getLatitude(),event.getLongitude());
 
                 Airport closestAirport = airportCollection.getClosestAirport(eventCoordinate);
                 GeoCoordinate airportCoordinate = new GeoCoordinate(closestAirport.getLatitude(),closestAirport.getLongitude());
@@ -56,9 +55,10 @@ public class Main {
 
                 boolean atAirport = false;
 
-                // but... i will check that we are in a certain margin of error. anything > 100 I will consider bad data
+                // but... i will check that we are in a certain margin of error. anything >= 1 I will consider bad data
+                // margin of error of 1 sm was an arbitrary decision. this can be tweaked based on requirement
                 if (onGround){
-                    if (eventCoordinate.GetDistanceTo(airportCoordinate) < 100){
+                    if (eventCoordinate.GetDistanceTo(airportCoordinate) < 1){
                         atAirport = true;
                     }
                 }
@@ -70,7 +70,7 @@ public class Main {
                         Flight flight = currentFlights.get(aircraftIdentifier);
 
                         // if we have landed at a new airport
-                        if (flight.getDepartureAirport() != closestAirport.getIdentifier()) {
+                        if (flight.getDepartureAirport() == null || !flight.getDepartureAirport().equals(closestAirport.getIdentifier())){
 
                             // fill in missing details for the flight re:arrival
                             flight.setArrivalAirport(closestAirport.getIdentifier());
@@ -87,19 +87,24 @@ public class Main {
                     }
                 // that plane is not on a flight
                 } else {
-                    // set up a new flight
-                    Flight flight = new Flight();
-                    flight.setAircraftIdentifier(event.getIdentifier());
+
 
                     // if the plane is at the airport, assume it is preparing for departure
+                    // any arrivals without a departure will not be tracked
+                    // this is because it is not possible to know if the plane arrived
+                    // or if it has simply been loitering at the airport for a while
                     if (atAirport) {
+                        // set up a new flight
+                        Flight flight = new Flight();
+                        flight.setAircraftIdentifier(event.getIdentifier());
+
                         flight.setDepartureAirport(closestAirport.getIdentifier());
                         flight.setDepartureTime(currentTime);
-                    }
 
-                    // add to current flight list and complete flight list
-                    currentFlights.put(event.getIdentifier(), flight);
-                    flights.add(flight);
+                        // add to current flight list and complete flight list
+                        currentFlights.put(event.getIdentifier(), flight);
+                        flights.add(flight);
+                    }
                 }
             }
 

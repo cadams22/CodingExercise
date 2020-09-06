@@ -17,14 +17,13 @@ import java.io.FileNotFoundException;
 public class Main {
 
     public static void main(String[] args) {
-        // change to a cleaner relative path
-        String path = "/Users/courtneyadams/Documents/gitProjects/CodingExercise/java/src/com/paragonintel/codingexercise/Resources/";
-        String jsonFilename = "airports.json";
-        String airportsFile = path + jsonFilename;
+        String path = "java/src/com/paragonintel/codingexercise/Resources/";
 
         AirportCollection airportCollection;
 
         try {
+            String jsonFilename = "airports.json";
+            String airportsFile = path + jsonFilename;
             airportCollection = AirportCollection.loadFromFile(airportsFile);
 
             String eventsFilename = "events.txt";
